@@ -1,0 +1,471 @@
+:root {
+    --bg-dark: #0d0d0d;
+    --bg-panel: #1a1a1a;
+    --accent-gold: #c5a059;
+    --accent-red: #8b0000;
+    --text-main: #d1d1d1;
+    --sidebar-width: 240px;
+}
+
+/* Target all autofill states to prevent browser "blue/white" override */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    /* Use a large inset box shadow to cover the default background */
+    -webkit-box-shadow: 0 0 0 1000px #000 inset !important;
+    /* Force the text color to match your gold accent */
+    -webkit-text-fill-color: var(--accent-gold) !important;
+    /* Maintain the border style from your .field inputs */
+    border: 1px solid #444 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Layout Grid */
+.app-container {
+    display: flex;
+    flex: 1;
+}
+
+.main-header {
+    background: var(--bg-panel);
+    border-bottom: 2px solid var(--accent-gold);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--bg-panel);
+    border-right: 1px solid #333;
+    padding: 2rem 1rem;
+}
+
+.sidebar ul { list-style: none; }
+.sidebar a {
+    color: var(--text-main);
+    text-decoration: none;
+    display: block;
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.sidebar a:hover { background: var(--accent-red); color: white; }
+
+#content { flex: 1; padding: 2rem; }
+
+/* 3 Breakpoints */
+@media (max-width: 1024px) {
+    :root { --sidebar-width: 200px; }
+}
+
+@media (max-width: 768px) {
+    .app-container { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #333; }
+}
+
+@media (max-width: 480px) {
+    .main-header { padding: 0.5rem; font-size: 0.8rem; }
+}
+
+/* Calculator Specific Styles */
+.calculator-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.roster-section {
+    position: relative;
+    height: 300px;
+    background: #111;
+    border: 1px solid #333;
+    display: flex;
+    padding: 1rem;
+}
+
+.overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.banner {
+    background: var(--accent-red);
+    color: white;
+    padding: 1rem 2rem;
+    font-weight: bold;
+    transform: rotate(-2deg);
+    border: 2px solid var(--accent-gold);
+}
+
+.separator {
+    border: 0;
+    height: 4px;
+    background: linear-gradient(to right, transparent, var(--accent-gold), transparent);
+}
+
+.params-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.param-group {
+    background: var(--bg-panel);
+    padding: 1.5rem;
+    border-radius: 4px;
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+input {
+    background: #000;
+    border: 1px solid #444;
+    color: var(--accent-gold);
+    padding: 0.5rem;
+}
+
+#calculate-btn {
+    grid-column: span 2;
+    background: var(--accent-red);
+    color: white;
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+#calculate-btn:hover {
+    background: #a00000;
+}
+
+/* Tablet/Mobile Adjustments */
+@media (max-width: 768px) {
+    .params-grid { grid-template-columns: 1fr; }
+    #calculate-btn { grid-column: span 1; }
+}
+
+/* Roster Visualization Styles */
+.roster-layout {
+    display: grid;
+    grid-template-columns: 1fr 200px 1fr;
+    gap: 1rem;
+    width: 100%;
+    opacity: 0.6; /* Makes it look "disabled" but visible behind overlay */
+}
+
+.unit-card {
+    border: 2px solid transparent;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    background: rgba(0,0,0,0.5);
+}
+
+.unit-card.green { border-color: #2d5a27; color: #4ade80; }
+.unit-card.red { border-color: #5a2727; color: #f87171; }
+
+.roster-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.weapon-selector {
+    border: 1px solid var(--accent-gold);
+    width: 100%;
+}
+
+.weapon-item {
+    padding: 5px;
+    border-bottom: 1px solid #333;
+    font-size: 0.7rem;
+    text-align: center;
+}
+
+.weapon-item.active { background: var(--accent-gold); color: black; }
+
+/* Instructions Image Styling */
+.diagram-asset {
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    border: 1px solid var(--accent-gold);
+    margin: 1rem 0;
+    filter: brightness(0.8) contrast(1.2);
+}
+
+.caption {
+    font-size: 0.8rem;
+    color: var(--accent-gold);
+    text-align: center;
+    font-style: italic;
+}
+
+.instruction-steps {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.step {
+    background: var(--bg-panel);
+    padding: 1rem;
+    border-left: 3px solid var(--accent-red);
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.field label {
+    font-size: 0.7rem;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.checkbox-row {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1.5rem;
+}
+
+.checkbox-label {
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Custom Select Styling */
+.custom-select {
+    width: 100%;
+    background: #000; /* Matches input background */
+    border: 1px solid #444; /* Matches input border */
+    color: var(--accent-gold); /* Matches input text */
+    padding: 0.5rem;
+    cursor: pointer;
+    appearance: none; /* Removes default OS arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    font-family: inherit;
+    font-size: 0.8rem;
+}
+
+/* Container for custom arrow icon */
+.select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Custom CSS Arrow */
+.select-wrapper::after {
+    content: '▼';
+    font-size: 0.6rem;
+    color: var(--accent-gold);
+    position: absolute;
+    right: 10px;
+    pointer-events: none;
+}
+
+.custom-select:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+}
+
+/* Styling the dropdown options list */
+.custom-select option {
+    background: var(--bg-panel);
+    color: var(--text-main);
+    padding: 10px;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--accent-gold);
+    background: #000;
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+input[type="checkbox"]:checked {
+    background: var(--accent-red);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+/* Custom Checkmark using a pseudo-element */
+input[type="checkbox"]:checked::after {
+    content: '✕'; /* High-contrast gothic-style cross */
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+input[type="checkbox"]:hover {
+    border-color: #fff;
+    box-shadow: 0 0 5px var(--accent-gold);
+}
+
+/* --- Custom SpinBox Arrows (Number Inputs) --- */
+.field input[type="number"] {
+    /* Kill default line-height gaps (the source of the extra pixel) */
+    display: block;
+    line-height: 1;
+    
+    /* Strict height prevents sub-pixel rounding errors on high-DPI screens */
+    height: 32px; 
+    
+    /* Ensure padding doesn't displace the internal spinner container */
+    padding: 0 5px;
+    
+    /* Standard appearance must be 'number-input' for Firefox compatibility */
+    -moz-appearance: textfield;
+    appearance: auto;
+}
+
+/* Webkit-specific Shadow DOM styling (Chrome, Edge, Safari) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: inner-spin-button !important;
+    opacity: 1 !important;
+    
+    /* Force full height to align exactly with input borders */
+    height: 32px;
+    
+    /* Remove default margins that cause shifting */
+    margin: 0;
+    
+    /* Tint: Maps grey UI to --accent-gold (#c5a059) */
+    filter: invert(72%) sepia(17%) saturate(845%) hue-rotate(357deg) brightness(92%) contrast(85%);
+    
+    cursor: pointer;
+}
+
+/* Critical: Prevent the Autofill blue shadow from masking the fixed UI */
+input:-webkit-autofill {
+    clip-path: inset(0 0 0 0);
+}
+
+/* --- NEW CHART STYLES --- */
+
+.charts-grid {
+    display: flex;
+    flex-wrap: wrap; /* Allows items to move to next row if they don't fit */
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-bottom: 3rem;
+    width: 100%;
+    justify-content: flex-start; /* Aligns charts to the left/start */
+}
+
+.chart-wrapper {
+    /* flex-grow: 1   -> Expand to fill empty space
+       flex-shrink: 1 -> Shrink if necessary
+       flex-basis: 500px -> Ideal minimum width before wrapping 
+    */
+    flex: 1 1 500px; 
+    
+    height: 250px; /* Thinner fixed height as requested */
+    position: relative;
+    
+    /* Crucial fix for Chart.js inside Flex containers to prevent overflow/breaking */
+    min-width: 0; 
+    
+    background: var(--bg-panel);
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 0.5rem; /* Reduced padding to maximize graph area */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Optional: Ensure the canvas inside always respects the wrapper height */
+.chart-wrapper canvas {
+    max-height: 100% !important;
+    width: 100% !important;
+}
+
+.results-card {
+    background: var(--bg-panel);
+    padding: 1rem;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid var(--accent-gold);
+    margin-top: 2rem;
+}
+
+.highlight {
+    color: var(--accent-gold);
+    font-weight: bold;
+}
+
+/*server status style*/
+.status {
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.5s ease;
+}
+
+.online {
+    color: var(--accent-gold);
+    text-shadow: 0 0 5px rgba(197, 160, 89, 0.5);
+}
+
+.offline {
+    color: #ff4444;
+    text-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
